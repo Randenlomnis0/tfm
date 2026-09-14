@@ -1,0 +1,6 @@
+speech_client:
+  ros__parameters:
+    output_topic: "/prompt"
+    language: "es"
+    whisper_model: "medium"
+    sample_rate: 16000

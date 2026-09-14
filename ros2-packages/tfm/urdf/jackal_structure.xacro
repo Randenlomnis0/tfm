@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Macro sensor_structure: soporte del LiDAR sobre el Jackal. Modela 4 columnas
+  de aluminio (1.5 cm de lado, 5.6 cm de alto) en las esquinas de una Intel NUC
+  (11.7 x 11.2 x 5.8 cm). Crea el link 'sensor_structure' unido al parent por un
+  joint fijo; el sensor se monta encima con otro joint a +0.114 m en Z.
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Dimensiones de las columnas -->
+  <xacro:property name="col_width"  value="0.015"/>   <!-- 1.5 cm de lado -->
+  <xacro:property name="col_height" value="0.056"/>    <!-- 5.6 cm de alto -->
+
+  <!-- Dimensiones de la Intel NUC -->
+  <xacro:property name="nuc_length" value="0.117"/>    <!-- 11.7 cm (eje X) -->
+  <xacro:property name="nuc_width"  value="0.112"/>    <!-- 11.2 cm (eje Y) -->
+  <xacro:property name="nuc_height" value="0.058"/>    <!-- 5.8 cm (eje Z) -->
+  <xacro:property name="nuc_mass"   value="0.5"/>      <!-- 500 g -->
+
+  <!-- Posiciones de las columnas en las esquinas de la huella de la NUC -->
+  <xacro:property name="col_x" value="${nuc_length/2 - col_width/2}"/>  <!-- ~0.051 m -->
+  <xacro:property name="col_y" value="${nuc_width/2  - col_width/2}"/>  <!-- ~0.0485 m -->
+
+  <!-- Centros verticales de los elementos visuales -->
+  <xacro:property name="col_center_z" value="${col_height/2}"/>
+  <xacro:property name="nuc_center_z" value="${col_height + nuc_height/2}"/>
+
+  <!-- parent: link padre (default_mount); *origin: pose relativa al padre. -->
+  <xacro:macro name="sensor_structure" params="parent *origin">
+
+    <link name="sensor_structure">
+      <!-- Inercia simplificada: caja con la masa total de la estructura (~1.5 kg). -->
+      <inertial>
+        <origin xyz="0 0 ${nuc_center_z}" rpy="0 0 0"/>
+        <mass value="1.5"/>
+        <inertia ixx="0.005" ixy="0.0" ixz="0.0"
+                 iyy="0.005" iyz="0.0"
+                 izz="0.001"/>
+      </inertial>
+
+      <!-- 4 columnas en las esquinas de la huella de la NUC. -->
+
+      <!-- Columna delantera izquierda -->
+      <visual>
+        <origin xyz="${col_x} ${col_y} ${col_center_z}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${col_width} ${col_width} ${col_height}"/>
+        </geometry>
+        <material name="dark_grey">
+          <color rgba="0.3 0.3 0.3 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="${col_x} ${col_y} ${col_center_z}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${col_width} ${col_width} ${col_height}"/>
+        </geometry>
+      </collision>
+
+      <!-- Columna delantera derecha -->
+      <visual>
+        <origin xyz="${col_x} ${-col_y} ${col_center_z}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${col_width} ${col_width} ${col_height}"/>
+        </geometry>
+        <material name="dark_grey"/>
+      </visual>
+      <collision>
+        <origin xyz="${col_x} ${-col_y} ${col_center_z}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${col_width} ${col_width} ${col_height}"/>
+        </geometry>
+      </collision>
+
+      <!-- Columna trasera izquierda -->
+      <visual>
+        <origin xyz="${-col_x} ${col_y} ${col_center_z}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${col_width} ${col_width} ${col_height}"/>
+        </geometry>
+        <material name="dark_grey"/>
+      </visual>
+      <collision>
+        <origin xyz="${-col_x} ${col_y} ${col_center_z}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${col_width} ${col_width} ${col_height}"/>
+        </geometry>
+      </collision>
+
+      <!-- Columna trasera derecha -->
+      <visual>
+        <origin xyz="${-col_x} ${-col_y} ${col_center_z}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${col_width} ${col_width} ${col_height}"/>
+        </geometry>
+        <material name="dark_grey"/>
+      </visual>
+      <collision>
+        <origin xyz="${-col_x} ${-col_y} ${col_center_z}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${col_width} ${col_width} ${col_height}"/>
+        </geometry>
+      </collision>
+
+      <!-- Intel NUC apoyada sobre las columnas. -->
+      <visual>
+        <origin xyz="0 0 ${nuc_center_z}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${nuc_length} ${nuc_width} ${nuc_height}"/>
+        </geometry>
+        <material name="nuc_black">
+          <color rgba="0.05 0.05 0.05 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${nuc_center_z}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${nuc_length} ${nuc_width} ${nuc_height}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Joint fijo al parent. -->
+    <joint name="sensor_structure_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="sensor_structure"/>
+      <xacro:insert_block name="origin"/>
+    </joint>
+
+  </xacro:macro>
+
+</robot>

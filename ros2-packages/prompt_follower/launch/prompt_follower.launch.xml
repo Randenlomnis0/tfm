@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Prompt Follower Node -->
+  <node
+    pkg="prompt_follower"
+    exec="prompt_follower"
+    name="prompt_follower"
+    output="screen"
+    emulate_tty="true">
+
+    <!-- Parameters -->
+    <param name="orin" value="orin-yes"/>
+    <param name="mode" value="goto"/>
+    <param name="confidence" value="0.05"/>
+    <param name="process_rate" value="2.0"/>  # static
+    <param name="goal_offset" value="2.0"/>
+
+  </node>
+
+</launch>

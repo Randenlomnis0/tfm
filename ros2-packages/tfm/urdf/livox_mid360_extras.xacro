@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Extras URDF de Clearpath (referenciado desde robot.yaml platform.extras.urdf).
+  Monta sobre default_mount: sensor_structure (columnas + NUC) desplazada +0.13 m
+  en X, y encima el Livox lidar3d_0 a +0.114 m en Z (0.056 columnas + 0.058 NUC).
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Estructura de soporte: 4 columnas + Intel NUC -->
+  <xacro:include filename="$(find tfg)/urdf/jackal_structure.xacro"/>
+
+  <!-- Sensor Livox Mid-360 -->
+  <xacro:include filename="$(find tfg)/urdf/livox_mid360.xacro"/>
+
+  <!-- 1. Instanciar la estructura desplazada 13 cm hacia delante del robot -->
+  <xacro:sensor_structure parent="default_mount">
+    <origin xyz="0.13 0 0" rpy="0 0 0"/>
+  </xacro:sensor_structure>
+
+  <!-- 2. Montar el Livox Mid-360 centrado encima de la NUC.
+       Altura total: 0.056 m (columnas) + 0.058 m (NUC) = 0.114 m -->
+  <xacro:mid360 name="lidar3d_0"
+                parent="sensor_structure"
+                topic="$(arg namespace)/sensors/lidar3d_0/scan">
+    <origin xyz="0 0 0.114" rpy="0 0 0"/>
+  </xacro:mid360>
+
+</robot>
